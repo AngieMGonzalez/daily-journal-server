@@ -1,6 +1,6 @@
 import sqlite3
 import json
-from models import Entry
+from models import Entry, Mood
 
 ENTRIES = [
     {
@@ -30,8 +30,11 @@ def get_all_entries():
             e.concept,
             e.entry,
             e.date,
-            e.mood_id
+            e.mood_id,
+            m.label
         FROM entry e
+        JOIN mood m
+            ON m.id = e.mood_id
         """)
 
         # Initialize an empty list to hold all entry representations
@@ -49,7 +52,15 @@ def get_all_entries():
             # entries class above.
             entry = Entry(
                 row['id'], row['concept'], row['entry'], row['date'], row['mood_id'])
+            
+            mood = Mood(
+                row['mood_id'], row['label']
+            )
 
+            # Add the dictionary representation of the mood to the entry
+            entry.mood = mood.__dict__
+
+            # Add the dictionary representation of the entry to the list
             entries.append(entry.__dict__)
 
     return entries
@@ -62,15 +73,18 @@ def get_single_entry(id):
         db_cursor = conn.cursor()
 
         # Use a ? parameter to inject a variable's value
-        # into the SQL statement.
+        # into the SQL statement
         db_cursor.execute("""
         SELECT
             e.id,
             e.concept,
             e.entry,
             e.date,
-            e.mood_id
+            e.mood_id,
+            m.label
         FROM entry e
+        JOIN mood m
+            ON m.id = e.mood_id
         WHERE e.id = ?
         """, ( id, ))
 
@@ -80,6 +94,12 @@ def get_single_entry(id):
         # Create an animal instance from the current row
         entry = Entry(data['id'], data['concept'], data['entry'],
                             data['date'], data['mood_id'])
+
+        mood = Mood(
+                data['mood_id'], data['label']
+            )
+
+        entry.mood = mood.__dict__
 
         return entry.__dict__
 

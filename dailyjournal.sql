@@ -76,3 +76,16 @@ SELECT
     e.mood_id
 FROM entry e
 WHERE e.entry LIKE '%java%' OR e.concept LIKE '%java%';
+
+-- nested JOIN
+
+SELECT
+	e.id,
+  e.concept,
+  e.entry,
+  e.date,
+  e.mood_id,
+	m.label
+FROM entry e
+JOIN mood m
+    ON m.id = e.mood_id;
