@@ -72,3 +72,15 @@ def get_single_mood(id):
         mood = Mood(data['id'], data['label'])
 
         return mood.__dict__
+
+def delete_mood(id):
+    """
+    deletes a row from the DB
+    """
+    with sqlite3.connect("./dailyjournal.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        DELETE FROM mood
+        WHERE id = ?
+        """, (id, ))
