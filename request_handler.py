@@ -1,5 +1,6 @@
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from urllib.parse import urlparse, parse_qs
 from views import get_all_entries
 
 # Here's a class. It inherits from another class.
@@ -25,14 +26,46 @@ class HandleRequests(BaseHTTPRequestHandler):
         # Your new console.log() that outputs to the terminal
         print(self.path)
 
-        # It's an if..else statement
-        if self.path == "/entries":
-            response = get_all_entries()
-        else:
-            response = []
+        response = {}
+
+        # Parse URL and store entire tuple in a variable
+        parsed = self.parse_url(self.path)
+
+        # If the path does not include a query parameter, continue with the original if block
+        if '?' not in self.path:
+            ( resource, id ) = parsed
+
+            if resource == "entry":
+                if id is not None:
+                    response = get_single_entry(id)
+                else:
+                    response = get_all_entries()
+            elif resource == "mood":
+                if id is not None:
+                    response = get_single_mood(id)
+                else:
+                    response = get_all_moods()
 
         # Send a JSON formatted string as a response
         self.wfile.write(json.dumps(response).encode())
+
+    # replace the parse_url function in the class
+    def parse_url(self, path):
+        """Parse the url into the resource and id"""
+        parsed_url = urlparse(path)
+        path_params = parsed_url.path.split('/')  # ['', 'animals', 1]
+        resource = path_params[1]
+
+        if parsed_url.query:
+            query = parse_qs(parsed_url.query)
+            return (resource, query)
+
+        pk = None
+        try:
+            pk = int(path_params[2])
+        except (IndexError, ValueError):
+            pass
+        return (resource, pk)
 
     # Here's a method on the class that overrides the parent's method.
     # It handles any POST request.
