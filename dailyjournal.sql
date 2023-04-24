@@ -62,3 +62,17 @@ INSERT INTO `Entry` VALUES (null, "Ethics", "Ethics of programming is undiscover
 
 DELETE FROM mood
 WHERE id = 6;
+
+-- search
+SELECT * FROM entry
+WHERE concept LIKE '%Python%'
+  OR entry LIKE '%python%';
+
+SELECT
+    e.id,
+    e.concept,
+    e.entry,
+    e.date,
+    e.mood_id
+FROM entry e
+WHERE e.entry LIKE '%java%' OR e.concept LIKE '%java%';
