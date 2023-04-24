@@ -1,7 +1,7 @@
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse, parse_qs
-from views import get_all_entries, get_single_entry, get_all_moods, get_single_mood
+from views import get_all_entries, get_single_entry, delete_entry, get_all_moods, get_single_mood, delete_mood
 
 # Here's a class. It inherits from another class.
 # For now, think of a class as a container for functions that
@@ -35,12 +35,12 @@ class HandleRequests(BaseHTTPRequestHandler):
         if '?' not in self.path:
             ( resource, id ) = parsed
 
-            if resource == "entry":
+            if resource == "entries":
                 if id is not None:
                     response = get_single_entry(id)
                 else:
                     response = get_all_entries()
-            elif resource == "mood":
+            elif resource == "moods":
                 if id is not None:
                     response = get_single_mood(id)
                 else:
@@ -84,6 +84,24 @@ class HandleRequests(BaseHTTPRequestHandler):
     def do_PUT(self):
         """Handles PUT requests to the server"""
         self.do_PUT()
+
+    def do_DELETE(self):
+        """deletes element from list. This is still in class HandleRequests
+        """
+        # Set a 204 response code
+        self._set_headers(204)
+
+        # Parse the URL
+        (resource, id) = self.parse_url(self.path)
+
+        # Delete a single resource from the list
+        if resource == "entries":
+            delete_entry(id)
+        if resource == "moods":
+            delete_mood(id)
+
+        # Encode the new resource and send in response
+        self.wfile.write("".encode())
 
     def _set_headers(self, status):
         # Notice this Docstring also includes information about the arguments passed to the function
