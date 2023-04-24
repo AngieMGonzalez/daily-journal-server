@@ -35,3 +35,13 @@ INSERT INTO `Entry` VALUES (null, "Javascript", "Dealing with Date is terrible. 
 
 SELECT * FROM Mood;
 SELECT * FROM Entry;
+
+-- Get only the entry row where the `id` field value is 3
+SELECT
+	e.id,
+  e.concept,
+  e.entry,
+  e.date,
+  e.mood_id
+FROM entry e
+WHERE e.id = 2;

@@ -1,7 +1,7 @@
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse, parse_qs
-from views import get_all_entries
+from views import get_all_entries, get_single_entry, get_all_moods, get_single_mood
 
 # Here's a class. It inherits from another class.
 # For now, think of a class as a container for functions that
