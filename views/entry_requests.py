@@ -151,3 +151,29 @@ def get_entries_by_search(search_term):
             entries.append(entry.__dict__)
 
     return entries
+
+def create_entry(new_entry):
+    """GET POST new resource
+    """
+    with sqlite3.connect("./dailyjournal.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        INSERT INTO Entry
+            ( concept, entry, date, mood_id )
+        VALUES
+            ( ?, ?, ?, ? );
+        """, (new_entry['concept'], new_entry['entry'],
+            new_entry['date'], new_entry['mood_id'] ))
+
+        # The `lastrowid` property on the cursor will return
+        # the primary key of the last thing that got added to
+        # the database.
+        id = db_cursor.lastrowid
+
+        # Add the `id` property to the animal dictionary that
+        # was sent by the client so that the client sees the
+        # primary key in the response.
+        new_entry['id'] = id
+
+    return new_entry
